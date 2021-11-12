@@ -25,11 +25,32 @@ async function run() {
       const orderCollection = database.collection(process.env.DB_COLLECTIONS_ORDER);
       const reviewCollection = database.collection(process.env.DB_COLLECTIONS_REVIEW);
 
-      const doc = {
-        title: "Record of a Shriveled Datum",
-        content: "No bytes, no problem. Just insert a document, in MongoDB",
-      }
-      const result = await userCollection.insertOne(doc);
+      app.post('/users', async (req, res) => {
+        const newUser = req.body;
+        const result = await userCollection.insertOne(newUser);
+        res.json(result);
+      });
+
+      app.put('/users', async (req, res) => {
+        const newUser = req.body;
+        const filter = {email: newUser.email};
+        const option = {upsert: true};
+
+        const upsertedDoc = {
+            $set: newUser
+        };
+        
+        const result = await userCollection.updateOne(filter, upsertedDoc, option);
+        res.json(result);
+      });
+
+      app.get('/reviews', async (req, res) => {
+        const query = {};
+        cursor = reviewCollection.find(query);
+
+        const reviews = await cursor.toArray();
+        res.json(reviews);
+      });
 
     } finally {
     //   Ensures that the client will close when you finish/error
