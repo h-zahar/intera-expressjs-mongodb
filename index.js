@@ -52,6 +52,12 @@ async function run() {
         res.json(reviews);
       });
 
+      app.get('/reviews', async(req, res) => {
+        const newReview = req.body;
+        const result = await reviewCollection.insertOne(newReview);
+        res.json(result);
+      });
+
     } finally {
     //   Ensures that the client will close when you finish/error
     //   await client.close();
