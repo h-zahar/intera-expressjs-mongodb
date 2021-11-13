@@ -25,6 +25,23 @@ async function run() {
       const orderCollection = database.collection(process.env.DB_COLLECTIONS_ORDER);
       const reviewCollection = database.collection(process.env.DB_COLLECTIONS_REVIEW);
 
+      app.get('/products', async (req, res) => {
+        const query = {};
+        const cursor = productCollection.find(query);
+
+        const result = await cursor.toArray();
+        res.json(result);
+      });
+
+      app.get('/products/featured', async (req, res) => {
+        const pipeline = [ { $limit: 6 } ];
+
+        const aggCursor = productCollection.aggregate(pipeline);
+        const result = await aggCursor.toArray();
+
+        res.json(result);
+      });
+
       app.post('/users', async (req, res) => {
         const newUser = req.body;
         const result = await userCollection.insertOne(newUser);
