@@ -42,6 +42,23 @@ async function run() {
         res.json(result);
       });
 
+      app.post('/products', async (req, res) => {
+        const insertDoc = req.body;
+
+        const result = await productCollection.insertOne(insertDoc);
+        res.json(result);
+      });
+
+      app.delete('/products/:id', async(req, res) => {
+        const { id } = req.params;
+        console.log(id);
+        const query = { _id: ObjectId(id) };
+
+        const result = await productCollection.deleteOne(query);
+        console.log(result);
+        res.json(result);
+      });
+
       app.post('/users', async (req, res) => {
         const newUser = req.body;
         const result = await userCollection.insertOne(newUser);
