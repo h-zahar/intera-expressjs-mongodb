@@ -44,6 +44,17 @@ async function run() {
         res.json(result);
       });
 
+      app.put('/users/:email', async (req, res) => {
+        const { email } = req.params;
+        const filter = { email: email };
+        const replacedDoc = {
+            $set: { isAdmin: true }
+        };
+
+        const result = await userCollection.updateOne(filter, replacedDoc);
+        res.json(result);
+      });
+
       app.get('/users/:email', async (req, res) => {
         const { email } = req.params;
         const query = { email: email };
