@@ -42,6 +42,14 @@ async function run() {
         res.json(result);
       });
 
+      app.get('/products/:id', async (req, res) => {
+        const { id } = req.params;
+        const query = { _id: ObjectId(id) };
+
+        const matchedProduct = await productCollection.findOne(query);
+        res.json(matchedProduct);
+      });
+
       app.post('/products', async (req, res) => {
         const insertDoc = req.body;
 
@@ -51,11 +59,9 @@ async function run() {
 
       app.delete('/products/:id', async(req, res) => {
         const { id } = req.params;
-        console.log(id);
         const query = { _id: ObjectId(id) };
 
         const result = await productCollection.deleteOne(query);
-        console.log(result);
         res.json(result);
       });
 
@@ -96,6 +102,66 @@ async function run() {
         const matchedUser = await userCollection.findOne(query);
         
         res.json(matchedUser);
+      });
+
+      app.get('/orders', async (req, res) => {
+        const query = {};
+        const cursor = orderCollection.find(query);
+
+        const orders = await cursor.toArray();
+        res.json(orders);
+      });
+
+      app.get('/orders/:email', async (req, res) => {
+          const { email } = req.params;
+        const query = { email: email };
+        
+        const cursor = orderCollection.find(query);
+
+        const orders = await cursor.toArray();
+        res.json(orders);
+      });
+
+      app.put('/orders', async (req, res) => {
+        const updated = req.body;
+
+        const filter = { _id: ObjectId(updated._id) };
+
+        let updateDoc = {};
+        if(updated.isShipped)
+        {
+         updated.isShipped = false;
+         updateDoc = {
+             $set: {
+                 isShipped: false
+             },
+         };
+        }
+
+        else {
+            updated.isShipped = true;
+            updateDoc = {
+                $set: {
+                    isShipped: true
+                },
+            };
+           }
+           const result = await orderCollection.updateOne(filter, updateDoc);
+           res.json(updated);
+      });
+
+      app.delete('/orders/:id', async (req, res) => {
+        const { id } = req.params;
+        const query = { _id: ObjectId(id) };
+
+        const result = await orderCollection.deleteOne(query);
+        res.json(result);
+      });
+
+      app.post('/orders', async (req, res) => {
+        const newOrder = req.body;
+        const result = await orderCollection.insertOne(newOrder);
+        res.json(result);
       });
 
       app.get('/reviews', async (req, res) => {
