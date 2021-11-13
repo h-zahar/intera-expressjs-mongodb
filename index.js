@@ -44,9 +44,18 @@ async function run() {
         res.json(result);
       });
 
+      app.get('/users/:email', async (req, res) => {
+        const { email } = req.params;
+        const query = { email: email };
+
+        const matchedUser = await userCollection.findOne(query);
+        
+        res.json(matchedUser);
+      });
+
       app.get('/reviews', async (req, res) => {
         const query = {};
-        cursor = reviewCollection.find(query);
+        const cursor = reviewCollection.find(query);
 
         const reviews = await cursor.toArray();
         res.json(reviews);
