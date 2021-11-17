@@ -7,7 +7,6 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
-app.options('*', cors());
 app.use(express.json());
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -27,7 +26,7 @@ const run = async () => {
       const orderCollection = database.collection(process.env.DB_COLLECTIONS_ORDER);
       const reviewCollection = database.collection(process.env.DB_COLLECTIONS_REVIEW);
 
-      app.get('/products', cors(), async (req, res, next) => {
+      app.get('/products', async (req, res) => {
         const query = {};
         const cursor = productCollection.find(query);
 
@@ -43,7 +42,7 @@ const run = async () => {
         
       });
 
-      app.get('/products/featured', cors(), async (req, res, next) => {
+      app.get('/products/featured', async (req, res) => {
         const pipeline = [ { $limit: 6 } ];
 
         const aggCursor = productCollection.aggregate(pipeline);
@@ -58,7 +57,7 @@ const run = async () => {
 
       });
 
-      app.get('/products/:id', cors(), async (req, res, next) => {
+      app.get('/products/:id', async (req, res) => {
         const { id } = req.params;
         const query = { _id: ObjectId(id) };
 
@@ -119,7 +118,7 @@ const run = async () => {
         res.json(result);
       });
 
-      app.get('/users/:email', cors(), async (req, res, next) => {
+      app.get('/users/:email', async (req, res) => {
         const { email } = req.params;
         const query = { email: email };
 
@@ -214,7 +213,7 @@ const run = async () => {
         res.json(result);
       });
 
-      app.get('/reviews', cors(), async (req, res, next) => {
+      app.get('/reviews', async (req, res) => {
         const query = {};
         const cursor = reviewCollection.find(query);
 
