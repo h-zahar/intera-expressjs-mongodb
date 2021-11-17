@@ -13,7 +13,6 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${proce
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-// func mongo
 async function run() {
     try {
       await client.connect();
@@ -30,7 +29,15 @@ async function run() {
         const cursor = productCollection.find(query);
 
         const result = await cursor.toArray();
-        res.json(result);
+
+        if(result) {
+          res.json(result);
+        }
+
+        else {
+          res.send([]);
+        }
+        
       });
 
       app.get('/products/featured', async (req, res) => {
@@ -39,7 +46,13 @@ async function run() {
         const aggCursor = productCollection.aggregate(pipeline);
         const result = await aggCursor.toArray();
 
-        res.json(result);
+        if(result) {
+          res.json(result);
+        }
+        else {
+          res.send([]);
+        }
+
       });
 
       app.get('/products/:id', async (req, res) => {
@@ -47,7 +60,15 @@ async function run() {
         const query = { _id: ObjectId(id) };
 
         const matchedProduct = await productCollection.findOne(query);
-        res.json(matchedProduct);
+
+        if(matchedProduct) {
+          res.json(matchedProduct);
+        }
+
+        else {
+          res.send({});
+        }
+
       });
 
       app.post('/products', async (req, res) => {
@@ -101,7 +122,14 @@ async function run() {
 
         const matchedUser = await userCollection.findOne(query);
         
-        res.json(matchedUser);
+        if(matchedUser) {
+          res.json(matchedUser);
+        }
+
+        else {
+          res.send({});
+        }
+
       });
 
       app.get('/orders', async (req, res) => {
@@ -109,7 +137,15 @@ async function run() {
         const cursor = orderCollection.find(query);
 
         const orders = await cursor.toArray();
-        res.json(orders);
+        
+        if(orders) {
+          res.json(orders);
+        }
+
+        else {
+          res.send([]);
+        }
+
       });
 
       app.get('/orders/:email', async (req, res) => {
@@ -119,7 +155,15 @@ async function run() {
         const cursor = orderCollection.find(query);
 
         const orders = await cursor.toArray();
-        res.json(orders);
+
+        if(orders) {
+          res.json(orders);
+        }
+
+        else {
+          res.send([]);
+        }
+
       });
 
       app.put('/orders', async (req, res) => {
@@ -169,7 +213,15 @@ async function run() {
         const cursor = reviewCollection.find(query);
 
         const reviews = await cursor.toArray();
-        res.json(reviews);
+
+        if(reviews) {
+          res.json(reviews);
+        }
+
+        else {
+          res.send([]);
+        }
+
       });
 
       app.post('/reviews', async(req, res) => {
