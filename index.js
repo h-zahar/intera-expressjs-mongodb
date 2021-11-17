@@ -1,10 +1,13 @@
-const cors = require('cors');
 const express = require('express');
-const app = express();
-app.use(cors());
+const cors = require('cors');
 const port = process.env.PORT || 5000;
+
 require('dotenv').config();
 
+const app = express();
+
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 
 const { MongoClient, ObjectId } = require('mongodb');
@@ -12,9 +15,6 @@ const { MongoClient, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_CLUSTER}.gmeoo.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.get('/', (req, res) => {
-  res.send('Server Running Happily...');
-});
 
 const run = async () => {
     try {
@@ -27,7 +27,7 @@ const run = async () => {
       const orderCollection = database.collection(process.env.DB_COLLECTIONS_ORDER);
       const reviewCollection = database.collection(process.env.DB_COLLECTIONS_REVIEW);
 
-      app.get('/products', async (req, res) => {
+      app.get('/products', cors(), async (req, res, next) => {
         const query = {};
         const cursor = productCollection.find(query);
 
@@ -43,7 +43,7 @@ const run = async () => {
         
       });
 
-      app.get('/products/featured', async (req, res) => {
+      app.get('/products/featured', cors(), async (req, res, next) => {
         const pipeline = [ { $limit: 6 } ];
 
         const aggCursor = productCollection.aggregate(pipeline);
@@ -58,7 +58,7 @@ const run = async () => {
 
       });
 
-      app.get('/products/:id', async (req, res) => {
+      app.get('/products/:id', cors(), async (req, res, next) => {
         const { id } = req.params;
         const query = { _id: ObjectId(id) };
 
@@ -119,7 +119,7 @@ const run = async () => {
         res.json(result);
       });
 
-      app.get('/users/:email', async (req, res) => {
+      app.get('/users/:email', cors(), async (req, res, next) => {
         const { email } = req.params;
         const query = { email: email };
 
@@ -194,7 +194,10 @@ const run = async () => {
             };
            }
            const result = await orderCollection.updateOne(filter, updateDoc);
-           res.json(updated);
+
+           if (result) {
+            res.json(updated);
+           }
       });
 
       app.delete('/orders/:id', async (req, res) => {
@@ -211,7 +214,7 @@ const run = async () => {
         res.json(result);
       });
 
-      app.get('/reviews', async (req, res) => {
+      app.get('/reviews', cors(), async (req, res, next) => {
         const query = {};
         const cursor = reviewCollection.find(query);
 
@@ -240,6 +243,9 @@ const run = async () => {
   
   run().catch(console.dir);
 
+app.get('/', (req, res) => {
+    res.send('Server Running Happily...');
+  });
 
 app.listen(port, () => {
     console.log(`Listening on Port ${port}`);
