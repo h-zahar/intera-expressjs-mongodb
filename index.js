@@ -14,8 +14,11 @@ const { MongoClient, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_CLUSTER}.gmeoo.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
+app.get('/', (req, res) => {
+  res.send('Server Running Happily...');
+});
 
-async function run() {
+async const run = () => {
     try {
       await client.connect();
 
@@ -236,12 +239,9 @@ async function run() {
     //   Ensures that the client will close when you finish/error
     //   await client.close();
     }
-  }
+  };
+  
   run().catch(console.dir);
-
-app.get('/', (req, res) => {
-    res.send('Server Running Happily...');
-});
 
 app.listen(port, () => {
     console.log(`Listening on Port ${port}`);
