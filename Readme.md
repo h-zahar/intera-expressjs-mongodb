@@ -1,6 +1,6 @@
 # intera-backend
 
-Live API: <a href="https://stark-sierra-52397.herokuapp.com/">Click Here</a><br />
+Live API: <a href="https://api-intera.onrender.com/">Click Here</a><br />
 
 This is live API server of Intera, a niche shop of terracotta. It contains necessary info of products, users, orders and helps to serve the requests.<br /><br />
 
